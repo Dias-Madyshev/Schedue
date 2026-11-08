@@ -80,13 +80,15 @@ function App() {
     return `${formatDate(currentMonday)} – ${formatDate(last)}`;
   })();
 
+  function openAddForSelectedDay() {
+    setModal({ lesson: null, date: selectedDay, time: '' });
+  }
+
   return (
     <div className="app">
       <header className="app-header">
-        <div className="header-left">
-          <h1 className="app-title">📅 Расписание</h1>
-        </div>
-        <div className="header-nav">
+        <h1 className="app-title">📅 Расписание</h1>
+        <div className="header-nav desktop-only">
           <button className={`view-btn ${view === 'week' ? 'active' : ''}`} onClick={() => setView('week')}>
             Неделя
           </button>
@@ -96,7 +98,7 @@ function App() {
         </div>
         <div className="header-right">
           <button className="btn-today" onClick={goToToday}>Сегодня</button>
-          <button className="btn-add" onClick={() => setModal({ lesson: null, date: selectedDay, time: '' })}>
+          <button className="btn-add desktop-only" onClick={openAddForSelectedDay}>
             + Урок
           </button>
         </div>
@@ -121,25 +123,51 @@ function App() {
         ))}
       </div>
 
-      {view === 'week' && (
-        <WeekView
-          monday={currentMonday}
-          lessons={weekLessons}
-          today={today}
-          onLessonClick={openEditLesson}
-          onAddLesson={openAddLesson}
-        />
-      )}
+      <div className="main-content">
+        {view === 'week' && (
+          <WeekView
+            monday={currentMonday}
+            lessons={weekLessons}
+            today={today}
+            onLessonClick={openEditLesson}
+            onAddLesson={openAddLesson}
+            onDayHeaderClick={handleDayClick}
+          />
+        )}
 
-      {view === 'day' && (
-        <DayView
-          date={selectedDay}
-          lessons={dayLessons}
-          today={today}
-          onLessonClick={openEditLesson}
-          onAddLesson={openAddLesson}
-        />
-      )}
+        {view === 'day' && (
+          <DayView
+            date={selectedDay}
+            lessons={dayLessons}
+            today={today}
+            onLessonClick={openEditLesson}
+            onAddLesson={openAddLesson}
+          />
+        )}
+      </div>
+
+      {/* Mobile bottom nav */}
+      <nav className="bottom-nav mobile-only">
+        <button
+          className={`bottom-nav-btn ${view === 'week' ? 'active' : ''}`}
+          onClick={() => setView('week')}
+        >
+          <span className="bottom-nav-icon">📆</span>
+          <span className="bottom-nav-label">Неделя</span>
+        </button>
+        <button
+          className={`bottom-nav-btn ${view === 'day' ? 'active' : ''}`}
+          onClick={() => setView('day')}
+        >
+          <span className="bottom-nav-icon">📋</span>
+          <span className="bottom-nav-label">День</span>
+        </button>
+      </nav>
+
+      {/* Mobile FAB */}
+      <button className="fab mobile-only" onClick={openAddForSelectedDay} aria-label="Добавить урок">
+        +
+      </button>
 
       {modal && (
         <LessonModal

@@ -15,6 +15,7 @@ export default function DayView({ date, lessons, today, onLessonClick, onAddLess
 
       {lessons.length === 0 ? (
         <div className="day-empty">
+          <span className="day-empty-icon">📭</span>
           <p>Нет уроков на этот день</p>
         </div>
       ) : (

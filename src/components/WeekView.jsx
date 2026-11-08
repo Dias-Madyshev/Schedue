@@ -6,7 +6,7 @@ const TIME_SLOTS = [
   '15:00','16:00','17:00','18:00','18:30','19:00','20:00'
 ];
 
-export default function WeekView({ monday, lessons, today, onLessonClick, onAddLesson }) {
+export default function WeekView({ monday, lessons, today, onLessonClick, onAddLesson, onDayHeaderClick }) {
   const days = getWeekDays(monday);
 
   function getLessonAt(date, time) {
@@ -15,20 +15,15 @@ export default function WeekView({ monday, lessons, today, onLessonClick, onAddL
 
   return (
     <div className="week-view">
+      {/* Desktop grid */}
       <div className="week-grid">
-        {/* Header */}
         <div className="week-time-col week-header-cell" />
         {days.map((date, i) => (
-          <div
-            key={date}
-            className={`week-day-header ${date === today ? 'today' : ''}`}
-          >
+          <div key={date} className={`week-day-header ${date === today ? 'today' : ''}`}>
             <span className="day-short">{DAY_NAMES[i]}</span>
             <span className="day-date">{formatDate(date)}</span>
           </div>
         ))}
-
-        {/* Time rows */}
         {TIME_SLOTS.map(time => (
           <div key={time} className="week-row-wrapper">
             <div className="week-time-col week-time-label">{time}</div>
@@ -50,22 +45,27 @@ export default function WeekView({ monday, lessons, today, onLessonClick, onAddL
         ))}
       </div>
 
-      {/* Mobile day columns */}
+      {/* Mobile: stacked day cards */}
       <div className="week-mobile">
         {days.map((date, i) => {
           const dayLessons = lessons[date] || [];
           return (
             <div key={date} className={`mobile-day ${date === today ? 'today' : ''}`}>
-              <div className="mobile-day-header">
+              <div
+                className="mobile-day-header"
+                onClick={() => onDayHeaderClick && onDayHeaderClick(date)}
+              >
                 <strong>{DAY_NAMES_FULL[i]}</strong>
                 <span>{formatDate(date)}</span>
               </div>
               {dayLessons.length === 0 ? (
                 <div className="mobile-empty">Нет уроков</div>
               ) : (
-                dayLessons.map(lesson => (
-                  <LessonCard key={lesson.id} lesson={lesson} onClick={onLessonClick} />
-                ))
+                <div className="mobile-day-lessons">
+                  {dayLessons.map(lesson => (
+                    <LessonCard key={lesson.id} lesson={lesson} onClick={onLessonClick} />
+                  ))}
+                </div>
               )}
               <button className="btn-add-lesson-day" onClick={() => onAddLesson(date, '')}>
                 + Добавить урок

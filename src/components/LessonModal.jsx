@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function LessonModal({ lesson, date, time, onSave, onDelete, onClose }) {
   const isNew = !lesson;
